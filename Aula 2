@@ -1,0 +1,42 @@
+# Logica
+import pandas as pd
+import plotly.express as px
+import numpy
+import time
+
+# Passo 1: Importar a base de dados
+tabela = pd.read_csv(r'C:\Users\Daniel\Documents\intensivão\Aula 2\telecom_users.csv')
+# Passo 2: Visualizar a base de dados
+# Visualizar a base de dados de forma superficial para se ter uma noção de como trabalhar com os dados
+# Passo 3: Tratamento de dados(Corrigir os problemas da base de dados)
+# Coluna inútil(excluir coluna)
+# axis = 0 -> linha
+# axis = 1 -> coluna
+tabela = tabela.drop("Unnamed: 0", axis=1)
+display(tabela)
+
+# Valores reconhecidos de forma errada
+tabela['TotalGasto'] = pd.to_numeric(tabela['TotalGasto'],errors='coerce')
+
+# Tratar valores vazios
+# o metodo 'all' do dropna exclue todas as colunas que contem valores vazios
+# o metodo 'any' do dropna exclue somente algumas colunas com valores vazios
+tabela = tabela.dropna(how='all' , axis=1) # Excluir as colunas vazias
+
+tabela = tabela.dropna(how='any', axis=0) # Excluir as linhas que tem algum valor vazio
+
+print(tabela.info())
+
+# Passo 4: Análise inicial
+print(tabela['Churn'].value_counts())
+print(tabela['Churn'].value_counts(normalize=True).map('{:.1%}'.format))
+
+# Passo 5: Análise detalhada dos clientes
+# O histogram precisa-se de 3 informações basicas
+
+# Excluir coluna sem ultilidade
+tabela = tabela.drop('IDCliente', axis=1)
+
+for coluna in tabela.columns:
+    grafico = px.histogram(tabela, x=coluna, color='Churn', color_discrete_sequence=['blue','gray'])
+    grafico.show()
