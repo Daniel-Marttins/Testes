@@ -1,0 +1,60 @@
+import pandas as pd
+
+# Passo 1: Importar a base de dados(fazer a IA criar uma estatistica de vendas futuras)
+tabela = pd.read_csv(r'C:\Users\Daniel\Documents\intensivão\Aula 4\advertising.csv')
+display(tabela)
+
+# Passo 2: Ajuste de Dados (Tratamento/Limpeza)
+print(tabela.info())
+
+# Passo 3: Análise Exploratória
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# criar o grafico
+sns.heatmap(tabela.corr(), cmap='flare', annot=True)
+
+# exibir o grafico
+plt.show()
+
+# Passo 4: Modelagem + Algoritmos (Aqui que entra a Inteligência Artificial, se necessário)
+
+# Separa os nossos dados em x e y
+
+y = tabela['Vendas'] # Quem eu quero prever
+x = tabela[['TV','Radio','Jornal']] # Quem eu quero usar para fazer a previsão
+
+# Separa os dados em treino e teste
+from sklearn.model_selection import train_test_split
+
+# Ordem única
+x_treino, x_teste, y_treino, y_teste = train_test_split(x,y, test_size=0.3)
+
+from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestRegressor
+
+modelo_regressaolinear = LinearRegression()
+modelo_arvoredecisao = RandomForestRegressor()
+
+modelo_regressaolinear.fit(x_treino, y_treino)
+modelo_arvoredecisao.fit(x_treino, y_treino)
+
+# Qual é o melhor modelo de IA
+
+previsao_regressaolinear = modelo_regressaolinear.predict(x_teste)
+previsao_arvoredecisao = modelo_arvoredecisao.predict(x_teste)
+
+from sklearn import metrics
+
+print(metrics.r2_score(y_teste, previsao_regressaolinear))
+print(metrics.r2_score(y_teste, previsao_arvoredecisao))
+
+# Como faze novas previsões(importar nova tabela com as informações de propaganda em TV, radio e Jornal)
+# Passa a nova tabela para o predict do seu modelo
+
+novos = pd.read_csv(r'C:\Users\Daniel\Documents\intensivão\Aula 4\novos.csv')
+display(novos)
+
+previsao = modelo_arvoredecisao.predict(novos)
+print(previsao)
+
